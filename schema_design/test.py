@@ -11,7 +11,7 @@ if __name__ == '__main__':
 
     # Подготавливаем DSN (Data Source Name) для подключения к БД Postgres
     dsn = {
-        'dbname': 'postgres',
+        'dbname': 'movies_database',
         'user': 'app',
         'password': '123qwe',
         'host': 'localhost',
@@ -21,7 +21,7 @@ if __name__ == '__main__':
 
     PERSONS_COUNT = 100000
 
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.now(datetime.UTC)
 
     # Установим соединение с БД с помощью контекстного менеджера with
     # В конце блока автоматически закроется курсор и соединение
