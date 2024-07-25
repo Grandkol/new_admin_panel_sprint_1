@@ -66,16 +66,19 @@ def load_from_sqlite(connection: sqlite3.Connection, pg_conn: _connection):
     """Основной метод загрузки данных из SQLite в Postgres"""
     for table, dataclass in TABLES_CLASSES.items():
         try:
-
             data = sqlite_loader(connection, table, dataclass)
         except Exception:
             log.exception("Ошибка при чтении из SQlite")
             break
+        finally:
+            sqlite_conn.close()
         try:
             postgres_saver(pg_conn, table, data=data)
         except Exception:
             log.exception(("Ошибка при загрузке в Postgres"))
             break
+        finally:
+            pg_conn.close()
 
 
 if __name__ == "__main__":
@@ -91,5 +94,3 @@ if __name__ == "__main__":
         **dsl, row_factory=dict_row, cursor_factory=ClientCursor
     ) as pg_conn:
         load_from_sqlite(sqlite_conn, pg_conn)
-    sqlite_conn.close()
-    pg_conn.close()

@@ -38,10 +38,14 @@ class PersonFilmWorkInline(admin.TabularInline):
 class FilmworkAdmin(admin.ModelAdmin):
     inlines = (GenreFilmworkInline, PersonFilmWorkInline)
 
-    list_display = ("title", "type",
+    list_display = ("title", "type", "get_genres",
                     "creation_date", "rating",
                     "created", "modified")
 
     list_filter = ("type",)
 
     search_fields = ("title", "description", "id")
+
+    @admin.display(description='genres')
+    def get_genres(self, obj):
+        return ', '.join([genre.name for genre in obj.genres.all()])

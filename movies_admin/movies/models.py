@@ -32,6 +32,18 @@ class Genre(UUIDMixin, TimeStampedMixin):
         return self.name
 
 
+class Person(UUIDMixin, TimeStampedMixin):
+    full_name = models.CharField(_("full_name"), null=False)
+
+    class Meta:
+        db_table = 'content"."person'
+        verbose_name = "Человек"
+        verbose_name_plural = "Люди"
+
+    def __str__(self):
+        return self.full_name
+
+
 class Filmwork(UUIDMixin, TimeStampedMixin):
     class Type(models.TextChoices):
         MOVIE = "movie", _("movie")
@@ -53,6 +65,7 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
         validators=[MinValueValidator(0), MaxValueValidator(100)],
     )
     genres = models.ManyToManyField(Genre, through="GenreFilmwork")
+    persons = models.ManyToManyField(Person, through='PersonFilmwork')
 
     class Meta:
         db_table = 'content"."film_work'
@@ -61,18 +74,6 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
 
     def __str__(self):
         return self.title
-
-
-class Person(UUIDMixin, TimeStampedMixin):
-    full_name = models.CharField(_("full_name"), null=False)
-
-    class Meta:
-        db_table = 'content"."person'
-        verbose_name = "Человек"
-        verbose_name_plural = "Люди"
-
-    def __str__(self):
-        return self.full_name
 
 
 class PersonFilmwork(UUIDMixin):
@@ -85,6 +86,9 @@ class PersonFilmwork(UUIDMixin):
 
     class Meta:
         db_table = 'content"."person_film_work'
+        constraints = [models.UniqueConstraint(
+            fields=['filmwork_id', 'person_id', 'role'],
+            name='person_film_work_unique')]
 
 
 class GenreFilmwork(UUIDMixin):
@@ -96,3 +100,6 @@ class GenreFilmwork(UUIDMixin):
 
     class Meta:
         db_table = 'content"."genre_film_work'
+        constraints = [models.UniqueConstraint(
+            fields=['genre_id', 'film_work_id'],
+            name='genre_film_work_unique')]
