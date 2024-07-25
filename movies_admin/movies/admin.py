@@ -46,6 +46,7 @@ class FilmworkAdmin(admin.ModelAdmin):
 
     search_fields = ("title", "description", "id")
 
-    @admin.display(description='genres')
+    @admin.display(description='genres',
+                   ordering='-name',)
     def get_genres(self, obj):
         return ', '.join([genre.name for genre in obj.genres.all()])
