@@ -4,16 +4,26 @@ from .models import Genre, Filmwork, Person, GenreFilmwork, PersonFilmwork
 
 @admin.register(Genre)
 class GenreAdmin(admin.ModelAdmin):
-    list_display = ('name', 'created', 'modified')
+    list_display = ("name", "created", "modified")
 
-    search_fields = ('name', 'id')
+    search_fields = ("name", "id")
 
 
 @admin.register(Person)
 class PersonAdmin(admin.ModelAdmin):
-    list_display = ('full_name', 'created', 'modified')
+    list_display = ("full_name", "created", "modified")
 
-    search_fields = ('full_name', 'id')
+    search_fields = ("full_name", "id")
+
+
+@admin.register(GenreFilmwork)
+class GenreFilmworkAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(PersonFilmwork)
+class PersonFilmworkAdmin(admin.ModelAdmin):
+    pass
 
 
 class GenreFilmworkInline(admin.TabularInline):
@@ -28,10 +38,10 @@ class PersonFilmWorkInline(admin.TabularInline):
 class FilmworkAdmin(admin.ModelAdmin):
     inlines = (GenreFilmworkInline, PersonFilmWorkInline)
 
-    list_display = ('title', 'type', 'creation_date', 'rating', 'created', 'modified')
+    list_display = ("title", "type",
+                    "creation_date", "rating",
+                    "created", "modified")
 
-    list_filter = ('type',)
+    list_filter = ("type",)
 
-    search_fields = ('title', 'description', 'id')
-
-
+    search_fields = ("title", "description", "id")

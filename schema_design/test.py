@@ -23,19 +23,14 @@ if __name__ == '__main__':
 
     now = datetime.datetime.now(datetime.UTC)
 
-    # Установим соединение с БД с помощью контекстного менеджера with
-    # В конце блока автоматически закроется курсор и соединение
-    # Обратите внимание: для версий psycopg < 3 соединение нужно закрывать вручную
-    # https://www.psycopg.org/docs/connection.html
     with psycopg.connect(**dsn) as conn, conn.cursor() as cur:
-        # Заполнение таблицы Person
         persons_ids = [str(uuid.uuid4()) for _ in range(PERSONS_COUNT)]
-        query = 'INSERT INTO person (id, full_name, created, modified) VALUES (%s, %s, %s, %s)'
+        query = ('INSERT INTO person (id, full_name, created, modified) '
+                 'VALUES (%s, %s, %s, %s)')
         data = [(pk, fake.last_name(), now, now) for pk in persons_ids]
         cur.executemany(query, data)
         conn.commit()
 
-        # Заполнение таблицы PersonFilmWork
         person_film_work_data = []
         roles = ['actor', 'producer', 'director']
 
@@ -45,8 +40,12 @@ if __name__ == '__main__':
         for film_work_id in film_works_ids:
             for person_id in random.sample(persons_ids, 5):
                 role = random.choice(roles)
-                person_film_work_data.append((str(uuid.uuid4()), film_work_id, person_id, role, now))
+                person_film_work_data.append((str(uuid.uuid4()),
+                                              film_work_id, person_id,
+                                              role, now))
 
-        query = 'INSERT INTO person_film_work (id, film_work_id, person_id, role, created) VALUES (%s, %s, %s, %s, %s)'
+        query = ('INSERT INTO person_film_work '
+                 '(id, film_work_id, person_id, role, created) '
+                 'VALUES (%s, %s, %s, %s, %s)')
         cur.executemany(query, person_film_work_data)
         conn.commit()
